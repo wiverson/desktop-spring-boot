@@ -1,25 +1,30 @@
 # JavaFX + Maven = Native Desktop Apps
 
-[JavaFX](https://openjfx.io) + [jpackage](https://docs.oracle.com/en/java/javase/15/docs/specs/man/jpackage.html) +
+[Spring Boot](https://spring.io/projects/spring-boot) +
+[jpackage](https://docs.oracle.com/en/java/javase/15/docs/specs/man/jpackage.html) +
 [Maven](http://maven.apache.org) template project for generating native desktop applications.
-
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/maven-jpackage-template/community)
 
 # Goal
 
-1. Build nice, small cross-platform [JavaFX](https://openjfx.io)-based desktop apps with native installers
+1. Build nice, small cross-platform [Spring Boot](https://spring.io/projects/spring-boot) based desktop apps with native
+   installers
     - Apx 30-40mb .dmg, .msi and .deb installers - check out the example builds in
-      [releases](https://github.com/wiverson/maven-jpackage-template/releases).
+      [releases](https://github.com/wiverson/desktop-spring-boot/releases).
 2. Just use Maven - no shell scripts required.
     - Use standard Maven dependency system to manage dependencies
-3. Generate [macOS (.dmg), Windows (.msi) and Unix (e.g. deb/rpm)](https://github.com/wiverson/maven-jpackage-template/releases)
+3.
+
+Generate [macOS (.dmg), Windows (.msi) and Unix (e.g. deb/rpm)](https://github.com/wiverson/maven-jpackage-template/releases)
 installers/packages automatically
 with [GitHub Actions](https://github.com/wiverson/maven-jpackage-template/tree/main/.github/workflows)
+
+In many ways this project provides a Java developer with tooling similar to Electron
+or [Neutralino.js](https://neutralino.js.org)
 
 ## Overview
 
 This template uses a [Maven plugin](https://github.com/wiverson/jtoolprovider-plugin) to generate a custom JVM and
-installer package for a JavaFX application.
+installer package for a Spring Boot application run as a desktop app. Conceptually this is similar to Electron
 
 The basic requirements are just Java 16 and Maven. [Java 15 will work](docs/java-15-jpackage.md), although it requires a
 bit of setup.
