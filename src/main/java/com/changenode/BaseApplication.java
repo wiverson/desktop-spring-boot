@@ -4,8 +4,10 @@ import com.changenode.plugin.*;
 import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 
+import static com.changenode.plugin.StandardMenus.isMac;
 import static javax.swing.filechooser.FileSystemView.getFileSystemView;
 
 public class BaseApplication implements Log {
@@ -15,7 +17,7 @@ public class BaseApplication implements Log {
      * This is the very simple "registry" for the various demonstration features of this application.
      */
     private final Plugin[] plugins = new Plugin[]{new StandardMenus(), new HelloWorld(), new FileDrop(),
-            new DesktopIntegration(), new LogFile(), new DarkMode()};
+            new DesktopIntegration(), new LogFile(), new DarkMode(), new DesktopHandlers()};
 
     BaseForm baseForm;
 
@@ -33,11 +35,16 @@ public class BaseApplication implements Log {
             e.printStackTrace();
         }
 
+        if (isMac()) {
+            System.setProperty("apple.laf.useScreenMenuBar", "true");
+        }
+
         FlatDraculaIJTheme.install();
 
         JFrame.setDefaultLookAndFeelDecorated(true);
 
-        new BaseApplication().openGUI();
+        BaseApplication baseApplication = new BaseApplication();
+        baseApplication.openGUI();
     }
 
     private void openGUI() {
@@ -51,12 +58,13 @@ public class BaseApplication implements Log {
 
         jFrame.setSize(1024, 768);
 
+
         JMenuBar jMenuBar = new JMenuBar();
         jFrame.setJMenuBar(jMenuBar);
-
         jFrame.setVisible(true);
 
         for (Plugin plugin : plugins) {
+            log("Setting up... " + plugin.getClass().getName());
             plugin.setup(jFrame, baseForm.textArea, baseForm.toolBar, this, jMenuBar);
         }
 
@@ -64,6 +72,8 @@ public class BaseApplication implements Log {
 
     @Override
     public void log(String s) {
+        System.out.println(s);
+        baseForm.textArea.append(System.lineSeparator());
         baseForm.textArea.append(s);
     }
 }
