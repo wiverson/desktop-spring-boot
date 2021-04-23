@@ -4,21 +4,20 @@ import com.changenode.plugin.*;
 import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 
 import static javax.swing.filechooser.FileSystemView.getFileSystemView;
 
-public class BaseApplication {
+public class BaseApplication implements Log {
 
+    public static File outputFile;
     /**
      * This is the very simple "registry" for the various demonstration features of this application.
      */
-    private static final Plugin[] plugins = new Plugin[]{new StandardMenus(), new HelloWorld(), new FileDrop(),
+    private final Plugin[] plugins = new Plugin[]{new StandardMenus(), new HelloWorld(), new FileDrop(),
             new DesktopIntegration(), new LogFile(), new DarkMode()};
-    public static File outputFile;
-    private static Log log;
 
+    BaseForm baseForm;
 
     public static void main(String[] args) {
         /*
@@ -38,33 +37,33 @@ public class BaseApplication {
 
         JFrame.setDefaultLookAndFeelDecorated(true);
 
-        openGUI();
+        new BaseApplication().openGUI();
     }
 
-    private static void openGUI() {
-        JFrame jFrame = new JFrame("Hello World Swing Example");
-        jFrame.setLayout(new FlowLayout());
-        jFrame.setSize(500, 360);
+    private void openGUI() {
+
+        JFrame jFrame = new JFrame("Base Application");
+
+        baseForm = new BaseForm();
+        jFrame.add(baseForm.panel);
+
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        jFrame.setBackground(Color.BLACK);
-
-        JToolBar jToolBar = new JToolBar();
-
-        JTextArea jTextArea = new JTextArea();
+        jFrame.setSize(1024, 768);
 
         JMenuBar jMenuBar = new JMenuBar();
-
-        jFrame.add(jToolBar);
-        jFrame.add(jTextArea);
-        jFrame.add(jMenuBar);
+        jFrame.setJMenuBar(jMenuBar);
 
         jFrame.setVisible(true);
 
         for (Plugin plugin : plugins) {
-            plugin.setup(jFrame, jTextArea, jToolBar, log, jMenuBar);
+            plugin.setup(jFrame, baseForm.textArea, baseForm.toolBar, this, jMenuBar);
         }
 
     }
 
+    @Override
+    public void log(String s) {
+        baseForm.textArea.append(s);
+    }
 }
