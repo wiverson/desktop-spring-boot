@@ -1,15 +1,12 @@
 package com.changenode;
 
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.ToolBar;
-import javafx.stage.Stage;
+import javax.swing.*;
 
 /**
  * This is a very basic, leaky example of a plugin interface
  */
 public interface Plugin {
 
-    void setup(Stage stage, TextArea textArea, ToolBar toolBar, Log log, MenuBar menuBar);
+    void setup(JFrame stage, JTextArea textArea, JToolBar toolBar, Log log, JMenuBar menuBar);
 
 }

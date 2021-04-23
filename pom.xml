@@ -52,8 +52,17 @@
             <artifactId>javafaker</artifactId>
             <version>1.0.2</version>
         </dependency>
-
-
+        <!-- Flat, modern look and feel. -->
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-intellij-themes</artifactId>
+            <version>1.1.2</version>
+        </dependency>
     </dependencies>
 
     <build>

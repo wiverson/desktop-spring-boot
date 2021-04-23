@@ -2,15 +2,8 @@ package com.changenode.plugin;
 
 import com.changenode.Log;
 import com.changenode.Plugin;
-import javafx.concurrent.Task;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.Taskbar.Feature;
 import java.awt.image.BufferedImage;
@@ -26,7 +19,7 @@ public class DesktopIntegration implements Plugin {
     Image defaultIcon;
     Image redCircleIcon;
 
-    public Menu extraDesktopIntegration(Log log) {
+    public JMenu extraDesktopIntegration(Log log) {
         if (!isTaskbarSupported())
             return null;
 
@@ -49,43 +42,48 @@ public class DesktopIntegration implements Plugin {
             redCircleIcon = bufferedImage;
 
         }
-        MenuItem useCustomIcon = Configure("Use Custom App Icon", x -> getTaskbar().setIconImage(redCircleIcon), null);
-        MenuItem useDefaultAppIcon = Configure("Use Default App Icon", x -> getTaskbar().setIconImage(defaultIcon), null);
-        useCustomIcon.setDisable(!getTaskbar().isSupported(Feature.ICON_IMAGE));
-        useDefaultAppIcon.setDisable(!getTaskbar().isSupported(Feature.ICON_IMAGE));
+        JMenuItem useCustomIcon = Configure("Use Custom App Icon", x -> getTaskbar().setIconImage(redCircleIcon));
+        JMenuItem useDefaultAppIcon = Configure("Use Default App Icon", x -> getTaskbar().setIconImage(defaultIcon));
+        useCustomIcon.setEnabled(getTaskbar().isSupported(Feature.ICON_IMAGE));
+        useDefaultAppIcon.setEnabled(getTaskbar().isSupported(Feature.ICON_IMAGE));
 
-        Menu desktopIntegration = new Menu("Desktop");
+        JMenu desktopIntegration = new JMenu("Desktop");
 
-        MenuItem setIconBadge = Configure("Set Badge", x -> getTaskbar().setIconBadge("1"), null);
-        MenuItem removeIconBadge = Configure("Remove Badge", x -> getTaskbar().setIconBadge("1"), null);
+        JMenuItem setIconBadge = Configure("Set Badge", x -> getTaskbar().setIconBadge("1"));
+        JMenuItem removeIconBadge = Configure("Remove Badge", x -> getTaskbar().setIconBadge("1"));
 
-        setIconBadge.setDisable(!getTaskbar().isSupported(Feature.ICON_BADGE_TEXT));
-        removeIconBadge.setDisable(!getTaskbar().isSupported(Feature.ICON_BADGE_TEXT));
+        setIconBadge.setEnabled(getTaskbar().isSupported(Feature.ICON_BADGE_TEXT));
+        removeIconBadge.setEnabled(getTaskbar().isSupported(Feature.ICON_BADGE_TEXT));
 
-
-        MenuItem addProgress = Configure("Add Icon Progress", x -> getTaskbar().setProgressValue(currentIconProgress++), KeyCode.R);
-        MenuItem clearProgress = Configure("Clear Icon Progress", x -> {
+        JMenuItem addProgress = Configure("Add Icon Progress", x -> getTaskbar().setProgressValue(currentIconProgress++));
+        JMenuItem clearProgress = Configure("Clear Icon Progress", x -> {
             currentIconProgress = -1;
             getTaskbar().setProgressValue(currentIconProgress++);
-        }, null);
-        addProgress.setDisable(!getTaskbar().isSupported(Feature.PROGRESS_VALUE));
-        clearProgress.setDisable(!getTaskbar().isSupported(Feature.PROGRESS_VALUE));
+        });
+        addProgress.setEnabled(getTaskbar().isSupported(Feature.PROGRESS_VALUE));
+        clearProgress.setEnabled(getTaskbar().isSupported(Feature.PROGRESS_VALUE));
 
-        MenuItem requestUserAttention = Configure("Request User Attention (5s)", x -> requestUserAttention(), null);
+        JMenuItem requestUserAttention = Configure("Request User Attention (5s)", x -> requestUserAttention());
 
-        requestUserAttention.setDisable(!getTaskbar().isSupported(Feature.USER_ATTENTION));
+        requestUserAttention.setEnabled(getTaskbar().isSupported(Feature.USER_ATTENTION));
 
-        desktopIntegration.getItems().addAll(setIconBadge, removeIconBadge, addProgress, clearProgress, useCustomIcon, useDefaultAppIcon, requestUserAttention);
+        desktopIntegration.add(setIconBadge);
+        desktopIntegration.add(removeIconBadge);
+        desktopIntegration.add(addProgress);
+        desktopIntegration.add(clearProgress);
+        desktopIntegration.add(useCustomIcon);
+        desktopIntegration.add(useDefaultAppIcon);
+        desktopIntegration.add(requestUserAttention);
 
         return desktopIntegration;
     }
 
     private void requestUserAttention() {
 
-        Task task = new Task<Void>() {
+        SwingWorker task = new SwingWorker<Void, Void>() {
 
             @Override
-            public Void call() {
+            protected Void doInBackground() {
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
@@ -94,13 +92,14 @@ public class DesktopIntegration implements Plugin {
                 getTaskbar().requestUserAttention(true, true);
                 return null;
             }
+
         };
 
         new Thread(task).start();
     }
 
     @Override
-    public void setup(Stage stage, TextArea textArea, ToolBar toolBar, Log log, MenuBar menuBar) {
-        menuBar.getMenus().add(extraDesktopIntegration(log));
+    public void setup(JFrame stage, JTextArea textArea, JToolBar toolBar, Log log, JMenuBar menuBar) {
+        menuBar.add(extraDesktopIntegration(log));
     }
 }

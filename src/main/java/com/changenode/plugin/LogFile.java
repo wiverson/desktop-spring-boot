@@ -3,8 +3,8 @@ package com.changenode.plugin;
 import com.changenode.BaseApplication;
 import com.changenode.Log;
 import com.changenode.Plugin;
-import javafx.scene.control.*;
-import javafx.stage.Stage;
+
+import javax.swing.*;
 
 import static java.awt.Desktop.getDesktop;
 import static java.lang.System.out;
@@ -12,17 +12,18 @@ import static java.util.Calendar.getInstance;
 
 public class LogFile implements Plugin {
     @Override
-    public void setup(Stage stage, TextArea textArea, ToolBar toolBar, Log log, MenuBar menuBar) {
+    public void setup(JFrame stage, JTextArea textArea, JToolBar toolBar, Log log, JMenuBar menuBar) {
 
-        Menu menu = new Menu("Debug");
-        MenuItem findDebugLog = new MenuItem("Find Debug Log");
-        findDebugLog.setOnAction(e -> showDebugLog());
+        JMenu menu = new JMenu("Debug");
+        JMenuItem findDebugLog = new JMenuItem("Find Debug Log");
+        findDebugLog.addActionListener(e -> showDebugLog());
 
-        MenuItem writeHelloWorldToLog = new MenuItem("Write Hello World to Log");
-        writeHelloWorldToLog.setOnAction(e -> out.println("Hello World! " + getInstance().getTime()));
+        JMenuItem writeHelloWorldToLog = new JMenuItem("Write Hello World to Log");
+        writeHelloWorldToLog.addActionListener(e -> out.println("Hello World! " + getInstance().getTime()));
 
-        menu.getItems().addAll(findDebugLog, writeHelloWorldToLog);
-        menuBar.getMenus().add(menu);
+        menu.add(findDebugLog);
+        menu.add(writeHelloWorldToLog);
+        menuBar.add(menu);
     }
 
     private void showDebugLog() {

@@ -2,44 +2,45 @@ package com.changenode.plugin;
 
 import com.changenode.Log;
 import com.changenode.Plugin;
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
+import javax.swing.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 
 import static java.lang.System.getProperty;
 
 public class StandardMenus implements Plugin {
 
-    private Stage stage;
-    private MenuBar menuBar;
+    private JFrame stage;
+    private JMenuBar menuBar;
     private Log output;
 
     public static boolean isMac() {
         return getProperty("os.name").contains("Mac");
     }
 
-    public static MenuItem Configure(String name, EventHandler<ActionEvent> action, KeyCode keyCode) {
-        MenuItem item = new MenuItem(name);
-        item.setOnAction(action);
-        if (keyCode != null)
-            item.setAccelerator(new KeyCodeCombination(keyCode, KeyCombination.SHORTCUT_DOWN));
+    public static JMenuItem Configure(String name, ActionListener action) {
+        return Configure(name, action, 0);
+    }
+
+    public static JMenuItem Configure(String name, ActionListener action, int keyCode) {
+        JMenuItem item = new JMenuItem(name);
+        item.addActionListener(action);
+        if (keyCode != 0)
+            item.setMnemonic(keyCode);
         return item;
     }
 
     private void openFileDialog() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open File");
-        File file = fileChooser.showOpenDialog(stage);
-        if (file != null) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Open File");
+        int result = fileChooser.showOpenDialog(stage);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
             output.log(file.getAbsolutePath());
+            return;
         } else {
             output.log("Open File cancelled.");
         }
@@ -47,34 +48,37 @@ public class StandardMenus implements Plugin {
 
     public void standardMenus() {
 
-        Menu file = new Menu("File");
-        MenuItem newFile = Configure("New", x -> output.log("File -> New"), KeyCode.N);
-        MenuItem open = Configure("Open...", x -> openFileDialog(), KeyCode.O);
+        JMenu file = new JMenu("File");
+        JMenuItem newFile = Configure("New", x -> output.log("File -> New"), KeyEvent.VK_N);
+        JMenuItem open = Configure("Open...", x -> openFileDialog(), KeyEvent.VK_O);
 
-        file.getItems().addAll(newFile, open);
+        file.add(newFile);
+        file.add(open);
 
         if (!isMac()) {
-            MenuItem quit = Configure("Quit", x -> Platform.exit(), KeyCode.Q);
-            file.getItems().add(quit);
-        } else {
-            menuBar.setUseSystemMenuBar(true);
+            JMenuItem quit = Configure("Quit", x -> System.exit(0), KeyEvent.VK_Q);
+            file.add(quit);
         }
 
-        Menu edit = new Menu("Edit");
-        MenuItem undo = Configure("Undo", x -> output.log("Undo"), KeyCode.Z);
-        MenuItem redo = Configure("Redo", x -> output.log("Redo"), KeyCode.R);
-        SeparatorMenuItem editSeparator = new SeparatorMenuItem();
-        MenuItem cut = Configure("Cut", x -> output.log("Cut"), KeyCode.X);
-        MenuItem copy = Configure("Copy", x -> output.log("Copy"), KeyCode.C);
-        MenuItem paste = Configure("Paste", x -> output.log("Paste"), KeyCode.V);
+        JMenu edit = new JMenu("Edit");
+        JMenuItem undo = Configure("Undo", x -> output.log("Undo"), KeyEvent.VK_Z);
+        edit.add(undo);
+        JMenuItem redo = Configure("Redo", x -> output.log("Redo"), KeyEvent.VK_R);
+        edit.add(redo);
+        edit.addSeparator();
+        JMenuItem cut = Configure("Cut", x -> output.log("Cut"), KeyEvent.VK_CUT);
+        edit.add(cut);
+        JMenuItem copy = Configure("Copy", x -> output.log("Copy"), KeyEvent.VK_COPY);
+        edit.add(copy);
+        JMenuItem paste = Configure("Paste", x -> output.log("Paste"), KeyEvent.VK_PASTE);
+        edit.add(paste);
 
-        edit.getItems().addAll(undo, redo, editSeparator, cut, copy, paste);
-
-        menuBar.getMenus().addAll(file, edit);
+        menuBar.add(file);
+        menuBar.add(edit);
     }
 
     @Override
-    public void setup(Stage stage, TextArea textArea, ToolBar toolBar, Log log, MenuBar menuBar) {
+    public void setup(JFrame stage, JTextArea textArea, JToolBar toolBar, Log log, JMenuBar menuBar) {
         this.menuBar = menuBar;
         this.output = log;
         this.stage = stage;

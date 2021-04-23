@@ -1,22 +1,23 @@
 package com.changenode;
 
 import com.changenode.plugin.*;
+import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.io.*;
 
 import static javax.swing.filechooser.FileSystemView.getFileSystemView;
 
-public class BaseApplication  {
+public class BaseApplication {
 
-    public static File outputFile;
     /**
      * This is the very simple "registry" for the various demonstration features of this application.
      */
-    private final Plugin[] plugins = new Plugin[]{new StandardMenus(), new HelloWorld(), new FileDrop(),
+    private static final Plugin[] plugins = new Plugin[]{new StandardMenus(), new HelloWorld(), new FileDrop(),
             new DesktopIntegration(), new LogFile(), new DarkMode()};
+    public static File outputFile;
+    private static Log log;
 
 
     public static void main(String[] args) {
@@ -33,8 +34,11 @@ public class BaseApplication  {
             e.printStackTrace();
         }
 
+        FlatDraculaIJTheme.install();
+
+        JFrame.setDefaultLookAndFeelDecorated(true);
+
         openGUI();
-        
     }
 
     private static void openGUI() {
@@ -43,17 +47,24 @@ public class BaseApplication  {
         jFrame.setSize(500, 360);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JLabel label = new JLabel("Hello World Swing");
-        Border border = BorderFactory.createLineBorder(Color.BLACK);
-        label.setBorder(border);
-        label.setPreferredSize(new Dimension(150, 100));
+        jFrame.setBackground(Color.BLACK);
 
-        label.setText("Hello World Swing");
-        label.setHorizontalAlignment(JLabel.CENTER);
-        label.setVerticalAlignment(JLabel.CENTER);
+        JToolBar jToolBar = new JToolBar();
 
-        jFrame.add(label);
+        JTextArea jTextArea = new JTextArea();
+
+        JMenuBar jMenuBar = new JMenuBar();
+
+        jFrame.add(jToolBar);
+        jFrame.add(jTextArea);
+        jFrame.add(jMenuBar);
+
         jFrame.setVisible(true);
+
+        for (Plugin plugin : plugins) {
+            plugin.setup(jFrame, jTextArea, jToolBar, log, jMenuBar);
+        }
+
     }
 
 }
