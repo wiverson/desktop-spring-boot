@@ -4,12 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.changenode</groupId>
-    <artifactId>maven-jpackage-template</artifactId>
+    <groupId>com.devhow</groupId>
+    <artifactId>desktop-spring-boot</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <!-- This description text is included in the Windows installer by default, see win-jpackage.txt -->
-    <description>Sample JavaFX Application</description>
+    <description>Spring Boot as a desktop app</description>
 
     <properties>
         <!-- Set this to the class with the main method for your application -->
@@ -28,7 +28,7 @@
         <!-- This property is used to specify the modules included in the (custom) JVM image. -->
         <!-- Reminder: javafx.web (the embedded browser component) is not included in this project by default due
         to GitHub template size restrictions. You can download the full SDK from https://openjfx.io -->
-        <jvm.modules>javafx.media,javafx.controls,javafx.fxml,java.logging</jvm.modules>
+        <jvm.modules>java.annotation,java.desktop,java.logging</jvm.modules>
 
         <!-- Set the project to UTF-8, avoiding warnings in the build logs -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,15 +36,12 @@
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
 
-        <!-- Used to set both the path to find the JavaFX modules and also the versions for Maven dependencies -->
-        <javafx.version>16</javafx.version>
-
         <!-- Replace this UUID with a custom one for your project. This ID is used by the Windows installer system
         to know that an installer is intended to replace/upgrade an earlier version. The easiest thing to do is
         grab a unique UUID via https://www.uuidgenerator.net -->
         <windows.upgrade.uuid>aaaaaaaa-0000-aaaa-aaaa-aaaaaaaaaaaa</windows.upgrade.uuid>
         <!-- This is used to set many user-visible fields in the Windows Installer. See win-jpackage.txt -->
-        <windows.vendor>Sample</windows.vendor>
+        <windows.vendor>Sample Vendor</windows.vendor>
     </properties>
 
     <dependencies>
@@ -56,27 +53,7 @@
             <version>1.0.2</version>
         </dependency>
 
-        <!-- This downloads the platform specific JavaFX libraries used by the project. -->
-        <!-- For the final installable, the JavaFX dependencies are provided via modules, but by including these here
-         they work nicely with with IDEs and other Maven plugins (e.g. the javafx:run). -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-            <classifier>${platform}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
-            <version>${javafx.version}</version>
-            <classifier>${platform}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
-            <classifier>${platform}</classifier>
-        </dependency>
+
     </dependencies>
 
     <build>
@@ -115,11 +92,6 @@
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
-                        <configuration>
-                            <!-- The JavaFX libraries are bundled into the custom JVM, so we don't want to duplicate
-                            them in the bundled app and installer. This command skips all of the JavaFX by groupId. -->
-                            <excludeGroupIds>org.openjfx</excludeGroupIds>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -130,15 +102,6 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <outputDirectory>${project.build.directory}/dependency</outputDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <!-- Plugin to make working with JavaFX nicer. See https://github.com/openjfx/javafx-maven-plugin -->
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.5</version>
-                <configuration>
-                    <mainClass>${main-class}</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -158,8 +121,6 @@
                         <configuration>
                             <toolName>jlink</toolName>
                             <removeDirectories>${project.build.directory}/jvm-image/</removeDirectories>
-                            <modulePath>${project.basedir}/${platform}-javafx/javafx-jmods-${javafx.version}/
-                            </modulePath>
                             <addModules>${jvm.modules}</addModules>
                             <output>${project.build.directory}/jvm-image</output>
                             <args>
