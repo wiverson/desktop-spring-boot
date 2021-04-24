@@ -2,9 +2,10 @@ package com.changenode;
 
 import com.changenode.plugin.*;
 import com.formdev.flatlaf.intellijthemes.FlatDraculaIJTheme;
+import de.jangassen.MenuToolkit;
+import de.jangassen.model.AppearanceMode;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 
 import static com.changenode.plugin.StandardMenus.isMac;
@@ -38,6 +39,8 @@ public class BaseApplication implements Log {
         if (isMac()) {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
         }
+
+        MenuToolkit.toolkit().setAppearanceMode(AppearanceMode.AUTO);
 
         FlatDraculaIJTheme.install();
 
