@@ -40,7 +40,9 @@ public class BaseApplication implements Log {
             System.setProperty("apple.laf.useScreenMenuBar", "true");
         }
 
-        MenuToolkit.toolkit().setAppearanceMode(AppearanceMode.AUTO);
+        System.setProperty("flatlaf.useWindowDecorations", "true");
+
+        MenuToolkit.toolkit().setAppearanceMode(AppearanceMode.DARK);
 
         FlatDraculaIJTheme.install();
 
@@ -60,7 +62,6 @@ public class BaseApplication implements Log {
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         jFrame.setSize(1024, 768);
-
 
         JMenuBar jMenuBar = new JMenuBar();
         jFrame.setJMenuBar(jMenuBar);
